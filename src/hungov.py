@@ -26,7 +26,7 @@ IDS = list(range(200)) + [
     2061,
 ]
 
-main_url = dz.SourceUrl("https://arfigyelo.gvh.hu/api/products-by-category/")
+main_url = "https://arfigyelo.gvh.hu/api/products-by-category/"
 
 
 def make_url(i, offset=0):
@@ -37,19 +37,18 @@ STARTER_URLS = [make_url(i) for i in IDS]
 
 
 class GetProducts(aswan.RequestJsonHandler):
-    process_indefinitely = False
-
     def parse(self, obj: dict):
-        offset = int(re.compile("offset=(\d+)").findall(self._url)[0])
+        offset = int(re.compile(r"offset=(\d+)").findall(self._url)[0])
         if (offset + LIMIT) < obj["count"]:
             self.register_links_to_handler(
-                [aswan.add_url_params(self._url, {"offset": offset + LIMIT})]
+                [aswan.add_url_params(self._url, {"offset": offset + LIMIT})],
+                overwrite=True,
             )
         return obj
 
 
 class HunGovPriceCollect(dz.DzAswan):
     name = "arfigyelo"
-    cron = "0 10 * * *"
+    cadence = "1d"
 
     starters = {GetProducts: STARTER_URLS}
