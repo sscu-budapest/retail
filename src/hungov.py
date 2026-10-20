@@ -37,6 +37,8 @@ STARTER_URLS = [make_url(i) for i in IDS]
 
 
 class GetProducts(aswan.RequestJsonHandler):
+    max_in_parallel = 2
+
     def parse(self, obj: dict):
         offset = int(re.compile(r"offset=(\d+)").findall(self._url)[0])
         if (offset + LIMIT) < obj["count"]:
@@ -52,6 +54,3 @@ class HunGovPriceCollect(dz.DzAswan):
     cadence = "1d"
 
     starters = {GetProducts: STARTER_URLS}
-
-    def prepare_run(self):
-        self.project.max_cpu_use = 2
