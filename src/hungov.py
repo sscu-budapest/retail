@@ -52,3 +52,6 @@ class HunGovPriceCollect(dz.DzAswan):
     cadence = "1d"
 
     starters = {GetProducts: STARTER_URLS}
+
+    def prepare_run(self):
+        self.project.max_cpu_use = 2
